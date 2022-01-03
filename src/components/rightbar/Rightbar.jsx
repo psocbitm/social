@@ -2,14 +2,17 @@ import "./rightbar.css";
 import React from "react";
 import { Users } from "../../dummyData";
 import Online from "../online/Online";
+import Home from "../../pages/home/Home";
 
 export default function Rightbar({ profile }) {
+	const PF = process.env.REACT_APP_PUBLIC_FOLDER
+
 	const HomeRightBar = () => {
 		return (
 			<>
 				<div className="birthdayContainer">
 					<img
-						src="/assets/gift.png"
+						src={`${PF}gift.png`}
 						className="birthdayImg"
 						alt=""
 					/>
@@ -129,7 +132,7 @@ export default function Rightbar({ profile }) {
 	return (
 		<div className="rightbar">
 			<div className="rightbarWrapper">
-				<ProfileRightBar />
+				{profile ? <ProfileRightBar /> : <HomeRightBar/>}
 			</div>
 		</div>
 	);

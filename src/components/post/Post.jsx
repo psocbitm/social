@@ -1,30 +1,49 @@
 import "./post.css";
-import React, { useState } from "react";
-import { MoreVert } from "@mui/icons-material";
-import { Users } from "../../dummyData";
-export default function Post({ post }) {
-	//hooks
-	const [like, setLike] = useState(post.like);
-	const [isLiked, setIsLiked] = useState(false);
+import { MoreVert, SettingsSuggestRounded } from "@mui/icons-material";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import TimeAgo from "react-timeago";
+import { Link } from "react-router-dom";
 
+// import { Users } from "../../dummyData";
+export default function Post({ post }) {
+	const PF = process.env.REACT_APP_PUBLIC_FOLDER;
+	//hooks
+	const [like, setLike] = useState(post.likes.length);
+	const [isLiked, setIsLiked] = useState(false);
+	const [user, setUser] = useState({});
+
+	useEffect(() => {
+		const fetchUser = async () => {
+			const res = await axios.get(`users/${post.userId}`);
+			setUser(res.data);
+		};
+		fetchUser();
+	}, []);
 	const likeHandler = () => {
 		setLike(isLiked ? like - 1 : like + 1);
 		setIsLiked(isLiked ? false : true);
 	};
 
-	const user = Users.filter((u) => u.id === post.userId);
 	return (
 		<div className="post">
 			<div className="postWrapper">
 				<div className="postTop">
 					<div className="postTopLeft">
-						<img
-							src={user[0].profilePicture}
-							className="postProfileImg"
-							alt=""
-						/>
-						<span className="postUsername">{user[0].username}</span>
-						<span className="postDate">{post.date}</span>
+						<Link to={`profile/${user.username}`}>
+							<img
+								src={
+									user.profilePicture ||
+									"https://image.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg"
+								}
+								className="postProfileImg"
+								alt=""
+							/>
+						</Link>
+						<span className="postUsername">{user.username}</span>
+						<span className="postDate">
+							<TimeAgo date={post.createdAt} />
+						</span>
 					</div>
 					<div className="postTopRight">
 						<MoreVert />
@@ -35,7 +54,7 @@ export default function Post({ post }) {
 						{post?.desc}
 						{/* question mark is here bcoz some post might not have any desc */}
 					</span>
-					<img src={post.photo} alt="Post" className="postImg" />
+					<img src={post.img} alt="Post" className="postImg" />
 				</div>
 				<div className="postBottom">
 					<div className="postBottomLeft">
